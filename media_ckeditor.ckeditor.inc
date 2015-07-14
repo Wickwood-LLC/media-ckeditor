@@ -13,7 +13,7 @@ function media_ckeditor_ckeditor_plugin_alter(&$plugins) {
   $plugins['media'] = array(
     'name' => 'media',
     'desc' => t('Plugin for embedding files using Media CKEditor'),
-    'path' => base_path() . drupal_get_path('module', 'media_ckeditor') . '/js/plugins/media/',
+    'path' => '%base_path%' . drupal_get_path('module', 'media_ckeditor') . '/js/plugins/media/',
     'buttons' => array(
       'Media' => array(
         'icon' => 'images/icon.gif',
