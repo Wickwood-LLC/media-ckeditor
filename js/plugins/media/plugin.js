@@ -13,10 +13,18 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
   var mediaPluginDefinition = {
     icons: 'media',
     requires: ['button'],
-    // Check if this instance has widget support. All the default distributions
-    // of the editor have the widget plugin disabled by default.
-    hasWidgetSupport: typeof(CKEDITOR.plugins.registered.widget) != 'undefined',
+    // All the default distributions of the editor have the widget plugin
+    // disabled by default.
+    hasWidgetSupport: false,
     mediaLegacyWrappers: false,
+    onLoad: function() {
+      // Check if this instance has widget support.
+      mediaPluginDefinition.hasWidgetSupport = typeof(CKEDITOR.plugins.registered.widget) != 'undefined';
+      // Add dependency to widget plugin if possible.
+      if (parseFloat(CKEDITOR.version) >= 4.3 && mediaPluginDefinition.hasWidgetSupport) {
+        mediaPluginDefinition.requires.push('widget');
+      }
+    },
 
     // Wrap Drupal plugin in a proxy plugin.
     init: function(editor){
@@ -214,9 +222,6 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
       }
     }
   };
-  // Add dependency to widget plugin if possible.
-  if (parseFloat(CKEDITOR.version) >= 4.3 && mediaPluginDefinition.hasWidgetSupport) {
-    mediaPluginDefinition.requires.push('widget');
-  }
+
   CKEDITOR.plugins.add( 'media', mediaPluginDefinition);
 } )();
