@@ -7,6 +7,28 @@
 (function ($) {
   Drupal.media = Drupal.media || {};
 
+  /**
+   * Attaches 'insert' button to media widget.
+   */
+  Drupal.behaviors.mediaWidgetInsert = {
+    attach: function (context, settings) {
+      // For each widget (in case of multi-entry) add an 'insert' button.
+      $('.media-widget', context).once('mediaInsertButton', function () {
+        if ($(this).find('input.fid').val() != 0) {
+          $('<a class="media-insert button">' + Drupal.t('Insert') + '</a>')
+            .click(function(e) {
+              e.preventDefault();
+              var fid = $(this).parent().parent().find('.fid').val();
+              var mediaFile = {fid: fid}
+              Drupal.ckeditorInstance.mediaInsert = {mediaFiles: [mediaFile]};
+              Drupal.ckeditorInstance.execCommand('media');
+            })
+            .insertBefore($(this).parent().parent().find('input.remove'));
+        }
+      });
+    }
+  };
+
   Drupal.settings.ckeditor.plugins['media'] = {
     /**
      * Execute the button.
@@ -22,7 +44,14 @@
         else {
           $alreadyInsertedMedia = jQuery(data.node).find('[data-media-element]');
         }
-        if ($alreadyInsertedMedia.length) {
+        if (typeof Drupal.ckeditorInstance.mediaInsert !== 'undefined') {
+          var mediaFile = Drupal.ckeditorInstance.mediaInsert.mediaFiles[0];
+          delete Drupal.ckeditorInstance.mediaInsert;
+          Drupal.media.popups.mediaStyleSelector(mediaFile, function (mediaFiles) {
+            Drupal.settings.ckeditor.plugins['media'].insertMediaFile(mediaFile, mediaFiles, CKEDITOR.instances[instanceId]);
+          }, settings['global']);
+        }
+        else if ($alreadyInsertedMedia.length) {
           // Change the view mode for already-inserted media.
           var mediaFile = Drupal.media.filter.extract_file_info($alreadyInsertedMedia);
           Drupal.media.popups.mediaStyleSelector(mediaFile, function (mediaFiles) {
