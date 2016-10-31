@@ -81,6 +81,10 @@
         else if ($alreadyInsertedMedia.length) {
           var mediaFile = Drupal.media.filter.extract_file_info($alreadyInsertedMedia);
           Drupal.media.popups.mediaStyleSelector(mediaFile, function (mediaFiles) {
+            // Delete the existing classes for mediaFile.
+            // Otherwise, code will copy these existing classes to replace what rendered in HTML.
+            // In that case, classes from 'CSS Class' field types will be lost.
+            delete mediaFile.attributes.class;
             Drupal.settings.ckeditor.plugins['media'].insertMediaFile(mediaFile, mediaFiles, CKEDITOR.instances[instanceId]);
           }, settings['global']);
         }
