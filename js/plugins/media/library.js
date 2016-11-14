@@ -73,6 +73,9 @@
       // Initialize widget on our html if possible.
       if (parseFloat(CKEDITOR.version) >= 4.3 && hasWidgetSupport) {
         ckeditorInstance.widgets.initOn( editorElement, 'mediabox' );
+
+        // Also support the image2 plugin.
+        ckeditorInstance.widgets.initOn( editorElement, 'image' );
       }
     },
 
