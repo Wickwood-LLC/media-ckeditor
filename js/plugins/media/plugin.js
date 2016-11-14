@@ -117,7 +117,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
             if (html != element.getHtml()) {
               element.setHtml(html);
             }
-            return element.name == 'mediawrapper';
+            return element.name == 'mediawrapper' || 'data-media-element' in element.attributes;
           },
 
           downcast: function( widgetElement ) {
