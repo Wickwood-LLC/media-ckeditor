@@ -13,6 +13,10 @@
      */
     invoke: function (data, settings, instanceId) {
       if (data.format == 'html') {
+        // CKEDITOR module support doesn't set this setting
+        if (typeof settings['global'] === 'undefined') {
+          settings['global'] = {id: 'media_wysiwyg'};
+        }
         if (jQuery(data.node).is('[data-media-element]')) {
           // Change the view mode for already-inserted media.
           var mediaFile = Drupal.media.filter.extract_file_info(jQuery(data.node));
