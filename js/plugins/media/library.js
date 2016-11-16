@@ -80,6 +80,12 @@
         // Next check to see if we are editing already-inserted media.
         else if ($alreadyInsertedMedia.length) {
           var mediaFile = Drupal.media.filter.extract_file_info($alreadyInsertedMedia);
+          // Fields in media tag are URL encode to play within JSON format.
+          // They need to be decoded back before sending to media browser for editing.
+          $.each(mediaFile.fields, function (field, value){
+            mediaFile.fields[field] = decodeURIComponent(value);
+          });
+
           Drupal.media.popups.mediaStyleSelector(mediaFile, function (mediaFiles) {
             // Delete the existing classes for mediaFile.
             // Otherwise, code will copy these existing classes to replace what rendered in HTML.
