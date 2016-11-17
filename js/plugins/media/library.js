@@ -55,10 +55,8 @@
     },
 
     insertMediaFile: function (mediaFile, formattedMedia, ckeditorInstance) {
-      // Prevent content of <a> tags being removed in create_element().
-      formattedMedia.options.link_text = null;
       // Customization of Drupal.media.filter.registerNewElement().
-      var element = Drupal.media.filter.create_element(formattedMedia.html.trim(), {
+      var element = Drupal.media.filter.create_element(formattedMedia.html, {
         fid: mediaFile.fid,
         view_mode: formattedMedia.type,
         attributes: mediaFile.attributes,
@@ -69,7 +67,7 @@
 
       // Use own wrapper element to be able to properly deal with selections.
       // Check prepareDataForWysiwygMode() in plugin.js for details.
-      var wysiwygHTML = Drupal.media.filter.outerHTML(element);
+      var wysiwygHTML = Drupal.media.filter.getWysiwygHTML(element);
 
       if (wysiwygHTML.indexOf("<!--MEDIA-WRAPPER-START-") !== -1) {
         ckeditorInstance.plugins.media.mediaLegacyWrappers = true;
