@@ -19,12 +19,14 @@ abstract class MediaCkeditorTestHelper extends DrupalWebTestCase {
     if (isset($modules[0]) && is_array($modules[0])) {
       $modules = $modules[0];
     }
-    $modules[] = 'token';
-    $modules[] = 'file_entity';
-    $modules[] = 'media';
     $modules[] = 'media_ckeditor';
     $modules[] = 'media_wysiwyg';
+    $modules[] = 'media';
     $modules[] = 'file_entity';
+    $modules[] = 'token';
+    $modules[] = 'views';
+    $modules[] = 'ctools';
+
     parent::setUp($modules);
   }
 
@@ -116,6 +118,11 @@ class MediaCkeditorViewModeTestHelper extends MediaCkeditorTestHelper {
 
   function setUp() {
     parent::setUp();
+
+    /* Reset the permissions cache prior to calling drupalCreateUser
+     * see notes here: https://api.drupal.org/comment/28739#comment-28739
+     */
+    $this->checkPermissions(array(), TRUE);
 
     $web_user = $this->drupalCreateUser(array(
       'access administration pages',
