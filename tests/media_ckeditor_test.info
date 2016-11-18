@@ -1,0 +1,6 @@
+name = Media Ckeditor test
+description = Provides hooks for testing Media Ckeditor module functionality.
+package = Media
+core = 7.x
+hidden = FALSE
+
