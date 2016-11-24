@@ -20,8 +20,12 @@ Drupal.media.formatForm.getOptions = function () {
   var ret = {};
 
   $.each($('#media-wysiwyg-format-form .fieldset-wrapper *').serializeArray(), function (i, field) {
-    // For all fields, since they WILL be in JSON, encode them.
-    ret[field.name] = encodeURIComponent(field.value);
+    // For all not text fields, since they WILL be in JSON, encode them.
+    if (field.name.match(/_text/i)) {
+      ret[field.name] = field.value;
+    } else {
+      ret[field.name] = encodeURIComponent(field.value);
+    }
 
     // When a field uses a WYSIWYG format, the value needs to be extracted.
     if (field.name.match(/\[format\]/i)) {
