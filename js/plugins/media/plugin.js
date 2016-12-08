@@ -83,7 +83,9 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
         CKEDITOR.dtd.$object['mediawrapper'] = 1;
       }
       function prepareDataForWysiwygMode(data) {
-        data = Drupal.media.filter.replaceTokenWithPlaceholder(data);
+        if (typeof Drupal.media !== 'undefined') {
+          data = Drupal.media.filter.replaceTokenWithPlaceholder(data);
+        }
         // Legacy media wrapper.
         mediaPluginDefinition.mediaLegacyWrappers = (data.indexOf("<!--MEDIA-WRAPPER-START-") !== -1);
         if (mediaPluginDefinition.mediaLegacyWrappers) {
@@ -98,7 +100,9 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
           replacement = '<!--MEDIA-WRAPPER-START-$1-->$2<!--MEDIA-WRAPPER-END-$1-->';
         }
         data = data.replace(/<mediawrapper data="(.*?)">(.*?)<\/mediawrapper>/gi, replacement);
-        data = Drupal.media.filter.replacePlaceholderWithToken(data);
+        if (typeof Drupal.media !== 'undefined') {
+          data = Drupal.media.filter.replacePlaceholderWithToken(data);
+        }
         return data;
       }
 
