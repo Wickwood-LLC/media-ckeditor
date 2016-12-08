@@ -60,6 +60,31 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
         }
       });
 
+      // Add a Ckeditor context menu item for editing already-inserted media.
+      if (editor.contextMenu) {
+        editor.addCommand('mediaConfigure', {
+          exec: function (editor) {
+            editor.execCommand('media');
+          },
+        });
+
+        editor.addMenuGroup('mediaGroup');
+        editor.addMenuItem('mediaConfigureItem', {
+          label: Drupal.t('Media settings'),
+          icon: this.path + 'images/icon.gif',
+          command: 'mediaConfigure',
+          group: 'mediaGroup'
+        });
+
+        editor.contextMenu.addListener(function(element) {
+          if (element.getAttribute('data-media-element') ||
+              element.find('[data-media-element]').count()) {
+            return { mediaConfigureItem: CKEDITOR.TRISTATE_OFF };
+          };
+        });
+      }
+
+      // Add the toolbar button.
       editor.ui.addButton( 'Media',
       {
         label: 'Add media',
