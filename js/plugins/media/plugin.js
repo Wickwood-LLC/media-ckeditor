@@ -163,6 +163,13 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
               return new CKEDITOR.htmlParser.text(token);
             }
             return false;
+          },
+
+          init: function() {
+            // Add double-click functionality to the widget.
+            this.on('doubleclick', function(evt) {
+              editor.execCommand('media');
+            }, null, null, 5 );
           }
         });
       }
