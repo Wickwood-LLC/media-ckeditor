@@ -140,16 +140,23 @@
       if (typeof fullyRenderedFile !== 'undefined') {
         formattedMedia.html = fullyRenderedFile;
       }
-
-      // Customization of Drupal.media.filter.registerNewElement().
-      var element = Drupal.media.filter.create_element(formattedMedia.html, {
+      var info = {
         fid: mediaFile.fid,
         view_mode: formattedMedia.type,
-        attributes: mediaFile.attributes,
         fields: formattedMedia.options
-      });
+      };
 
       var hasWidgetSupport = typeof(CKEDITOR.plugins.registered.widget) != 'undefined';
+
+      // Allow server to change attributes.
+      // For example, template may change CSS classes according to cetain
+      // field values.
+      if (!hasWidgetSupport) {
+        info.attributes = mediaFile.attributes;
+      }
+
+      // Customization of Drupal.media.filter.registerNewElement().
+      var element = Drupal.media.filter.create_element(formattedMedia.html, info);
 
       // Use own wrapper element to be able to properly deal with selections.
       // Check prepareDataForWysiwygMode() in plugin.js for details.
