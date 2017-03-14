@@ -10,6 +10,7 @@
  */
 function media_ckeditor_element_info_alter(&$types) {
   $types['text_format']['#pre_render'][] = 'media_ckeditor_pre_render_text_format';
+  $types['media']['#pre_render'][] = 'media_ckeditor_pre_render_media';
 }
 
 /**
@@ -36,7 +37,8 @@ function media_ckeditor_pre_render_text_format($element) {
     'data' => drupal_get_path('module', 'media_ckeditor') . '/js/plugins/media/library.js',
     'type' => 'file',
     'scope' => 'footer',
-    'weight' => -20,
+    // It's important that this javascript fire after CKEditor.
+    'weight' => 20,
   );
 
   // Communicate to javascript whether we will be displaying fully rendered
@@ -199,4 +201,43 @@ function media_ckeditor_preprocess_file_entity(&$vars) {
       _media_ckeditor_fully_rendered_files_in_wysiwyg()) {
     $vars['page'] = TRUE;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function media_ckeditor_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
+  // Add a checkbox that marks this field as needing an "Insert" button.
+  if (!empty($form['#instance']['widget']['module'])) {
+    if ('media' === $form['#instance']['widget']['module']) {
+      $form['instance']['settings']['wysiwyg_insert'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Show button for inserting files into WYSIWYG editor'),
+        '#description' => t('If checked, then an "Insert" button will be available to put attached files into the active WYSIWYG editor.'),
+        '#default_value' => isset($form['#instance']['settings']['wysiwyg_insert']) ? $form['#instance']['settings']['wysiwyg_insert'] : FALSE,
+      );
+    }
+  }
+}
+
+/**
+ * Pre-render callback for media elements.
+ */
+function media_ckeditor_pre_render_media($element) {
+  // If the media widget has been configured to have an Insert button, we'll
+  // communicate that information through javascript settings.
+  $instance = field_info_instance($element['#entity_type'], $element['#field_name'], $element['#bundle']);
+  if (!empty($instance['settings']['wysiwyg_insert'])) {
+    $element['#attached']['js'][] = array(
+      'type' => 'setting',
+      'data' => array(
+        'media_ckeditor' => array(
+          'wysiwyg_insert' => array(
+            $element['#field_name'] => TRUE,
+          ),
+        ),
+      ),
+    );
+  }
+  return $element;
 }
