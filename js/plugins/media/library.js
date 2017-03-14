@@ -54,7 +54,58 @@
       return;
     },
 
-    insertMediaFile: function (mediaFile, formattedMedia, ckeditorInstance) {
+    insertMediaFile: function (mediaFile, formattedMedia, ckeditorInstance, fullyRenderedFile) {
+
+      // See if we should use ajax to get the fully rendered file.
+      if (typeof fullyRenderedFile === 'undefined' &&
+          Drupal.settings.media_ckeditor.fully_rendered_files) {
+
+        $.ajax({
+          url: Drupal.settings.basePath + 'media/rendered-in-wysiwyg',
+          type: 'GET',
+          data: {
+            fid: mediaFile.fid,
+            view_mode: formattedMedia.type,
+            fields: formattedMedia.options
+          },
+          success: function(html) {
+            // To work around an IE issue, preload any image. The issue is
+            // that IE requests the image 2 times, and one request gets a 503,
+            // causing a broken image icon in the WYSIWYG instead of the actual
+            // image.
+            var $images = $(html).find('img');
+            if (!$images.length || $(html).find('picture').length) {
+              // If there are no images, just insert the html immediately, by
+              // re-calling this function with the ajax-retrieved HTML.
+              Drupal.settings.ckeditor.plugins['media'].insertMediaFile(mediaFile, formattedMedia, ckeditorInstance, html);
+            }
+            else {
+              // Otherwise do the same, but only after the first image preloads.
+              // Possible future improvement might be to handle multiple images
+              // instead of just the first, but even better would be to remove
+              // this workaround entirely, when/if IE's behavior changes.
+              var image = new Image();
+              image.onload = function() {
+                Drupal.settings.ckeditor.plugins['media'].insertMediaFile(mediaFile, formattedMedia, ckeditorInstance, html);
+              }
+              image.src = $images.first().attr('src');
+            }
+          },
+          error: function(data) {
+            // Fallback to whatever the HTML was already going to be.
+            Drupal.settings.ckeditor.plugins['media'].insertMediaFile(mediaFile, formattedMedia, ckeditorInstance, formattedMedia.html);
+          }
+        });
+
+        // Stop for now, because the callback above re-calls this same function.
+        return;
+      }
+
+      // See if we already used ajax to get the fully rendered file.
+      if (typeof fullyRenderedFile !== 'undefined') {
+        formattedMedia.html = fullyRenderedFile;
+      }
+
       // Customization of Drupal.media.filter.registerNewElement().
       var element = Drupal.media.filter.create_element(formattedMedia.html, {
         fid: mediaFile.fid,
@@ -197,4 +248,22 @@
     }
   };
 
+  // If media_ckeditor is configured to render items in the wysiwyg as full
+  // rendered file entities, we need to completely hijack a function from
+  // media_wysiwyg.filter.js.
+  if (Drupal.settings.media_ckeditor.fully_rendered_files) {
+
+    // Replaces function of the same name, from media_wysiwyg.filter.js.
+    Drupal.media.filter.replacePlaceholderWithToken = function(content) {
+
+      var $placeholder = $(content);
+      if ($placeholder.hasClass('media-element')) {
+        var macro = Drupal.media.filter.create_macro($placeholder);
+        Drupal.media.filter.ensure_tagmap();
+        Drupal.settings.tagmap[macro] = content;
+        return macro;
+      }
+      return content;
+    }
+  }
 })(jQuery);
