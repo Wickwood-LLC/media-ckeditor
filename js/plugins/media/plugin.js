@@ -17,6 +17,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
     // disabled by default.
     hasWidgetSupport: false,
     mediaLegacyWrappers: false,
+    hidpi: true,
     onLoad: function() {
       // Check if this instance has widget support.
       mediaPluginDefinition.hasWidgetSupport = typeof(CKEDITOR.plugins.registered.widget) != 'undefined';
@@ -88,8 +89,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
       editor.ui.addButton( 'Media',
       {
         label: 'Add media',
-        command: 'media',
-        icon: this.path + 'images/icon.gif'
+        command: 'media'
       });
 
       var ckeditorversion = parseFloat(CKEDITOR.version);
