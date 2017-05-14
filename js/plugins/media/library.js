@@ -7,6 +7,44 @@
 (function ($) {
   Drupal.media = Drupal.media || {};
 
+  /**
+   * Attaches 'insert' button to media widget.
+   */
+  Drupal.behaviors.mediaWidgetInsert = {
+    attach: function (context, settings) {
+      if (Drupal.ckeditorInstance && Drupal.settings.media_ckeditor && Drupal.settings.media_ckeditor.wysiwyg_insert) {
+        // Only add buttons on fields that have been configured so, by
+        // consulting the Drupal.settings.media_ckeditor.wysiwyg_insert var.
+        for (var fieldName in Drupal.settings.media_ckeditor.wysiwyg_insert) {
+          var fieldId = '#edit-' + fieldName.replace(/_/g, '-');
+          // Within the field markup, look for the table of files.
+          $(fieldId, context).find('.media-widget').once('mediaInsertButton', function() {
+            // For each file, check to see if there is a file ID.
+            if ($(this).find('input.fid').val() != 0) {
+              // Now we add the button next to "Remove".
+              var insertButton = $('<a class="media-insert button">' + Drupal.t('Insert') + '</a>')
+                .click(function(e) {
+                  e.preventDefault();
+                  var fid = $(this).parent().parent().find('.fid').val();
+                  var mediaFile = {fid: fid}
+                  Drupal.ckeditorInstance.mediaInsert = {mediaFiles: [mediaFile]};
+                  Drupal.ckeditorInstance.execCommand('media');
+                });
+              // Insert the button, differently for single vs. multi value.
+              var multiValue = $(fieldId + ' table', context).length;
+              if (multiValue) {
+                insertButton.insertBefore($(this).parent().parent().find('input.remove'));
+              }
+              else {
+                insertButton.insertBefore($(this).find('input.remove'));
+              }
+            }
+          });
+        }
+      }
+    }
+  };
+
   Drupal.settings.ckeditor.plugins['media'] = {
     /**
      * Execute the button.
@@ -26,13 +64,22 @@
         else {
           $alreadyInsertedMedia = jQuery(data.node).find('[data-media-element]');
         }
-        if ($alreadyInsertedMedia.length) {
-          // Change the view mode for already-inserted media.
+        // First check to see if we are using an Insert button.
+        if (typeof Drupal.ckeditorInstance.mediaInsert !== 'undefined') {
+          var mediaFile = Drupal.ckeditorInstance.mediaInsert.mediaFiles[0];
+          delete Drupal.ckeditorInstance.mediaInsert;
+          Drupal.media.popups.mediaStyleSelector(mediaFile, function (mediaFiles) {
+            Drupal.settings.ckeditor.plugins['media'].insertMediaFile(mediaFile, mediaFiles, CKEDITOR.instances[instanceId]);
+          }, settings['global']);
+        }
+        // Next check to see if we are editing already-inserted media.
+        else if ($alreadyInsertedMedia.length) {
           var mediaFile = Drupal.media.filter.extract_file_info($alreadyInsertedMedia);
           Drupal.media.popups.mediaStyleSelector(mediaFile, function (mediaFiles) {
             Drupal.settings.ckeditor.plugins['media'].insertMediaFile(mediaFile, mediaFiles, CKEDITOR.instances[instanceId]);
           }, settings['global']);
         }
+        // Otherwise we are embedding new media.
         else {
           Drupal.media.popups.mediaBrowser(function (mediaFiles) {
             Drupal.settings.ckeditor.plugins['media'].mediaBrowserOnSelect(mediaFiles, instanceId);
