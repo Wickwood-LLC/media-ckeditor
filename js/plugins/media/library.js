@@ -63,6 +63,11 @@
         }
         else {
           $alreadyInsertedMedia = jQuery(data.node).find('[data-media-element]');
+          // For some reason, in MS Edge, data.node is a descendant of what
+          // we are looking for, so we should also look "upwards" for media.
+          if (!$alreadyInsertedMedia.length) {
+            $alreadyInsertedMedia = jQuery(data.node).closest('[data-media-element]');
+          }
         }
         // First check to see if we are using an Insert button.
         if (typeof Drupal.ckeditorInstance.mediaInsert !== 'undefined') {
