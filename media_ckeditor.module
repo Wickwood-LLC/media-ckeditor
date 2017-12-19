@@ -47,6 +47,10 @@ function media_ckeditor_pre_render_text_format($element) {
     'data' => array(
       'media_ckeditor' => array(
         'fully_rendered_files' => _media_ckeditor_fully_rendered_files_in_wysiwyg(),
+        'labels' => array(
+          'settings' => t('Media settings'),
+          'add' => t('Add media'),
+        ),
       ),
     ),
     'type' => 'setting',
