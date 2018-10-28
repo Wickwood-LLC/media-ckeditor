@@ -90,7 +90,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
         editor.addMenuGroup('mediaGroup');
         editor.addMenuItem('mediaConfigureItem', {
           label: Drupal.settings.media_ckeditor.labels['settings'],
-          icon: this.path + 'images/icon.gif',
+          icon: this.path + 'icons/media.png',
           command: 'mediaConfigure',
           group: 'mediaGroup'
         });
