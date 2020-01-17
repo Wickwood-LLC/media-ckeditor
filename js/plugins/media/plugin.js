@@ -20,7 +20,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
     hidpi: true,
     onLoad: function() {
       // Check if this instance has widget support.
-      // mediaPluginDefinition.hasWidgetSupport = typeof(CKEDITOR.plugins.registered.widget) != 'undefined';
+      mediaPluginDefinition.hasWidgetSupport = typeof(CKEDITOR.plugins.registered.widget) != 'undefined';
       // Add dependency to widget plugin if possible.
       if (Drupal.settings.ckeditor.plugins['media'].compareVersions(CKEDITOR.version, '4.3') >= 0 && mediaPluginDefinition.hasWidgetSupport) {
         mediaPluginDefinition.requires.push('widget');
