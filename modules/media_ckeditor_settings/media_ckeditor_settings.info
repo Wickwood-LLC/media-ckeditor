@@ -1,0 +1,17 @@
+name = Media Ckeditor Settings
+description = If you are using the media_ckeditor module and you want to embed media, enable this for working ACF defaults
+core = 7.x
+package = User Interface
+version = 7.x-4.0
+dependencies[] = ckeditor
+dependencies[] = features
+dependencies[] = filter
+dependencies[] = media_ckeditor
+dependencies[] = media_wysiwyg
+features[ckeditor_profile][] = Advanced
+features[ckeditor_profile][] = CKEditor Global Profile
+features[ckeditor_profile][] = Full
+features[features_api][] = api:2
+features[filter][] = filtered_html
+features[filter][] = full_html
+features[filter][] = plain_text
