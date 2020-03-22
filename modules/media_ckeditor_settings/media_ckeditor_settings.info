@@ -1,7 +1,7 @@
 name = Media Ckeditor Settings
 description = If you are using the media_ckeditor module and you want to embed media, enable this for working ACF defaults
 core = 7.x
-package = User Interface
+package = User interface
 version = 7.x-4.0
 dependencies[] = ckeditor
 dependencies[] = features

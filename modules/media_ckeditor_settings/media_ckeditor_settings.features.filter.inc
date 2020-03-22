@@ -19,8 +19,15 @@ function media_ckeditor_settings_filter_default_formats() {
     'status' => 1,
     'weight' => 0,
     'filters' => array(
-      'filter_html' => array(
+      'media_filter_paragraph_fix' => array(
         'weight' => -49,
+        'status' => 1,
+        'settings' => array(
+          'replace' => 1,
+        ),
+      ),
+      'filter_html' => array(
+        'weight' => -48,
         'status' => 1,
         'settings' => array(
           'allowed_html' => '<a> <em> <strong> <cite> <blockquote> <code> <img> <h2> <h1> <h3> <div> <span> <section> <b> <ul> <ol> <li> <dl> <dt> <dd> <p> <table> <td> <tr>',
@@ -29,7 +36,7 @@ function media_ckeditor_settings_filter_default_formats() {
         ),
       ),
       'filter_htmlcorrector' => array(
-        'weight' => -43,
+        'weight' => -42,
         'status' => 1,
         'settings' => array(),
       ),
@@ -58,7 +65,7 @@ function media_ckeditor_settings_filter_default_formats() {
         'weight' => -42,
         'status' => 1,
         'settings' => array(
-          'replace' => 0,
+          'replace' => 1,
         ),
       ),
       'media_filter' => array(

@@ -114,7 +114,7 @@ code[class,style](*);',
       'name' => 'CKEditor Global Profile',
       'settings' => array(
         'skin' => 'moono',
-        'ckeditor_path' => '%l/ckeditor',
+        'ckeditor_path' => '//cdn.ckeditor.com/4.14.0/full-all',
         'ckeditor_local_path' => '',
         'ckeditor_plugins_path' => '%m/plugins',
         'ckeditor_plugins_local_path' => '',
